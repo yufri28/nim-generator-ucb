@@ -21,8 +21,8 @@ class Tabel extends CI_Controller {
 	public function index()
 	{
 		$data['prodi'] = $this->m_data->get_data('tb_prodi')->result();
-		$data['jalur_masuk'] = $this->m_data->get_data('tb_jalur_masuk')->result();
 		$data['periode'] = $this->m_data->get_data('tb_periode')->result();
+		$data['jalur_masuk'] = $this->m_data->get_data('tb_jalur_masuk')->result();
 		$this->load->view('tabel', $data);
 	}
 }

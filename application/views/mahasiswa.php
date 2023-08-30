@@ -1,7 +1,6 @@
 <?php
 
 $this->load->view('template/header');
-
 ?>
 <!-- Begin Page Content -->
 <div class="container-fluid">
@@ -12,7 +11,7 @@ $this->load->view('template/header');
         <div class="card-header py-3">
             <div class="d-flex">
                 <h6 class="m-0 font-weight-bold text-primary">Data Mahasiswa</h6>
-                <button type="button" class="btn ml-auto btn-primary">+ Tambah</button>
+                <a href="mahasiswa/show_tambah" class="btn ml-auto btn-primary">+ Tambah</a>
             </div>
         </div>
         <div class="card-body">
@@ -28,34 +27,26 @@ $this->load->view('template/header');
                             <th>Jalur Masuk</th>
                             <th>Aksi</th>
                         </tr>
+                        </tr>
                     </thead>
                     <tbody>
+                        <?php foreach($mahasiswa as $key => $value):?>
                         <tr>
-                            <td>1</td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>Edinburgh</td>
+                            <td><?=++$key.'.'?></td>
+                            <td><?=$value->nim == NULL ? '-':$value->nim;?></td>
+                            <td><?=$value->nama;?></td>
+                            <td><?=$value->nama_prodi;?></td>
+                            <td><?=$value->periode_semester;?></td>
+                            <td><?=$value->jalur_masuk;?></td>
                             <td>
                                 <a href="" class="btn ml-auto btn-success">Edit</a>
-                                <a href="" class="btn ml-auto btn-info">Generate NIM</a>
+                                <a href="<?=base_url()?>mahasiswa/generate_nim/<?=$value->id_mahasiswa;?>"
+                                    class="btn ml-auto btn-info">Generate
+                                    NIM</a>
                                 <a href="" class="btn ml-auto btn-danger">Hapus</a>
                             </td>
                         </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>System Architect</td>
-                            <td>Edinburgh</td>
-                            <td>Edinburgh</td>
-                            <td>
-                                <a href="" class="btn ml-auto btn-success">Edit</a>
-                                <a href="" class="btn ml-auto btn-info">Generate NIM</a>
-                                <a href="" class="btn ml-auto btn-danger">Hapus</a>
-                            </td>
-                        </tr>
+                        <?php endforeach;?>
                     </tbody>
                 </table>
             </div>

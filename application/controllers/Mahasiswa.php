@@ -3,23 +3,99 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Mahasiswa extends CI_Controller {
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see https://codeigniter.com/userguide3/general/urls.html
-	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->model('mahasiswa_model');
+	}
+
 	public function index()
 	{
-		$this->load->view('mahasiswa');
+		$data['mahasiswa'] = $this->mahasiswa_model->get_data();
+		$this->load->view('mahasiswa', $data);
+	}
+
+	public function show_tambah()
+	{
+		$data['prodi'] = $this->m_data->get_data('tb_prodi')->result();
+		$data['periode'] = $this->m_data->get_data('tb_periode')->result();
+		$data['jalur_masuk'] = $this->m_data->get_data('tb_jalur_masuk')->result();
+		$this->load->view('tambah_mahasiswa', $data);
+	}
+
+	public function add()
+	{
+		$nama = $this->input->post('nama_mahasiswa');
+		$prodi = $this->input->post('prodi');
+		$periode = $this->input->post('periode');
+		$jalur_masuk = $this->input->post('jalur_masuk');
+
+		$data = array(
+			'id' => 0,
+			'nim' => null,
+			'nama' => $nama,
+			'f_id_prodi' => $prodi,
+			'f_id_periode' => $periode,
+			'f_id_jalur_masuk' => $jalur_masuk
+		);
+		$this->m_data->insert_data($data, 'tb_mahasiswa');
+		redirect(base_url('mahasiswa'));
+	}
+
+
+	public function count_by_jalur($id_jalur)
+	{
+		$jumlah = $this->db->query(
+			"SELECT COUNT(*) AS jumlah 
+			FROM tb_mahasiswa 
+			WHERE tb_mahasiswa.f_id_jalur_masuk=$id_jalur
+			AND tb_mahasiswa.nim IS NOT NULL;")->row_array();
+		return $jumlah['jumlah'];
+	}
+
+	public function generate_nim($id){
+		$tahun = date('Y');
+		$dua_digit_angka = substr($tahun,2,2);
+		$kode_prodi = '';
+		$kode_periode = '';
+		$kode_jalur_masuk = '';
+		$no_urut = '';
+		$id_jalur_masuk = '';
+		$nim = '';
+
+		if($id == null){
+			echo 'tidak ada data yang dikirim';
+		}else{
+			$data = $this->mahasiswa_model->get_by_id($id);
+			foreach ($data as $key => $value) {
+				$kode_prodi = $value->kode_prodi;
+				$kode_periode = $value->kode_periode;
+				$kode_jalur_masuk = $value->kode_jalur_masuk;
+				$id_jalur_masuk = $value->f_id_jalur_masuk;
+			}
+
+			$no_urut = $this->generate_no_urut($id_jalur_masuk);
+			$nim = $dua_digit_angka.$kode_prodi.$kode_periode.$kode_jalur_masuk.$no_urut;
+		}
+		
+		if($this->mahasiswa_model->update_nim($nim, $id)){
+			echo "Generate NIM berhasil";
+		}
+	}
+
+	public function generate_no_urut($id_jalur_masuk){
+		$jumlah = $this->count_by_jalur($id_jalur_masuk)+1;
+		switch ($jumlah) {
+			case $jumlah < 10:
+				$nomor_urut = '00'.$jumlah;
+				break;
+			case $jumlah < 100:
+				$nomor_urut = '0'.$jumlah;
+				break;
+			case $jumlah < 1000:
+				$nomor_urut = $jumlah;
+				break;
+		}
+		return $nomor_urut;
 	}
 }
