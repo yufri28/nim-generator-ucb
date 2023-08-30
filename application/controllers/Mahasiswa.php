@@ -15,7 +15,7 @@ class Mahasiswa extends CI_Controller {
 		$this->load->view('mahasiswa', $data);
 	}
 
-	public function show_tambah()
+	public function show_add()
 	{
 		$data['prodi'] = $this->m_data->get_data('tb_prodi')->result();
 		$data['periode'] = $this->m_data->get_data('tb_periode')->result();
@@ -53,7 +53,8 @@ class Mahasiswa extends CI_Controller {
 		return $jumlah['jumlah'];
 	}
 
-	public function generate_nim($id){
+	public function generate_nim(){
+		$count = 0;
 		$tahun = date('Y');
 		$dua_digit_angka = substr($tahun,2,2);
 		$kode_prodi = '';
@@ -63,23 +64,34 @@ class Mahasiswa extends CI_Controller {
 		$id_jalur_masuk = '';
 		$nim = '';
 
-		if($id == null){
-			echo 'tidak ada data yang dikirim';
-		}else{
-			$data = $this->mahasiswa_model->get_by_id($id);
-			foreach ($data as $key => $value) {
-				$kode_prodi = $value->kode_prodi;
-				$kode_periode = $value->kode_periode;
-				$kode_jalur_masuk = $value->kode_jalur_masuk;
-				$id_jalur_masuk = $value->f_id_jalur_masuk;
+		$data_id = $this->input->post('id');
+		foreach ($data_id as $key => $id) {
+			if($id == null || $id == ""){
+				echo 'tidak ada data yang dikirim';
+			}else{
+				$data = $this->mahasiswa_model->get_by_id($id);
+				foreach ($data as $key => $value) {
+					$kode_prodi = $value->kode_prodi;
+					$kode_periode = $value->kode_periode;
+					$kode_jalur_masuk = $value->kode_jalur_masuk;
+					$id_jalur_masuk = $value->f_id_jalur_masuk;
+				}
+
+				$no_urut = $this->generate_no_urut($id_jalur_masuk);
+				$nim = $dua_digit_angka.$kode_prodi.$kode_periode.$kode_jalur_masuk.$no_urut;
 			}
 
-			$no_urut = $this->generate_no_urut($id_jalur_masuk);
-			$nim = $dua_digit_angka.$kode_prodi.$kode_periode.$kode_jalur_masuk.$no_urut;
+			// $this->mahasiswa_model->update_nim($nim, $id);
+			if($this->mahasiswa_model->update_nim($nim, $id)){
+				$count++;
+			}
 		}
 		
-		if($this->mahasiswa_model->update_nim($nim, $id)){
-			echo "Generate NIM berhasil";
+		if($count > 1){
+			echo "<script>
+			alert('NIM berhasil di generate');
+			window.location.href = '".base_url()."mahasiswa';
+			</script>";
 		}
 	}
 

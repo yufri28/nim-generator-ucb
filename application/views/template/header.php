@@ -46,7 +46,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item <?= $this->uri->segment(1) == 'home' ? 'active' : '';?>">
-                <a class="nav-link" href="home">
+                <a class="nav-link" href="<?=base_url('home');?>">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -59,12 +59,12 @@
             </div>
             <!-- Nav Item - Tables -->
             <li class="nav-item <?= $this->uri->segment(1) == 'tabel' ? 'active' : '';?>">
-                <a class="nav-link" href="tabel">
+                <a class="nav-link" href="<?=base_url('tabel');?>">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Tables</span></a>
             </li>
             <li class="nav-item <?= $this->uri->segment(1) == 'mahasiswa' ? 'active' : '';?>">
-                <a class="nav-link" href="mahasiswa">
+                <a class="nav-link" href="<?=base_url('mahasiswa');?>">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Mahasiswa</span></a>
             </li>
